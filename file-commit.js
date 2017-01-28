@@ -15,7 +15,7 @@ const shaObj    = new jssha('SHA-1', 'TEXT');
 const encoding  = 'utf-8';
 let data;
 let isLogging   = true;
-//let dfltMssg    = "trial ";
+let dfltMssg    = "trial ";
 
 function writeFile(fPath, fCont, enc) {
   return new Promise(function (fulfill, reject) {
@@ -31,7 +31,7 @@ function gitAdd(fPath) {
 }
 
 function gitCommit(message) {
-    return asyncex('git commit -m "Trial"');
+    return asyncex('git commit -m "' + message + '"');
 }
 
 function gitHash(){
@@ -49,17 +49,17 @@ function gitResetH() {
     return asyncex("git reset --hard HEAD~");
 }
 
-function gitRetry(){
+function gitRetry(message){
     return gitResetSHead()
         .then(function(){
-            return gitCommit()
+            return gitCommit(message)
                 .then(function(){
                     return gitHash()
                 });
         });
 }
 
-function writeandCommit(fPath, fCont, enc) {
+function writeandCommit(fPath, fCont, enc, message) {
     return gitHash()
         .then(function(res){ 
             if(isLogging) {console.log("Commit prior to Operations: " + res); }
@@ -69,7 +69,7 @@ function writeandCommit(fPath, fCont, enc) {
                     if(isLogging) {console.log("File to commit: " + fPath); }
                     return gitAdd(fPath)
                         .then (function(){
-                            return gitCommit()
+                            return gitCommit(message)
                                 .then (function(){
                                     return gitHash()
                                 });
@@ -92,10 +92,10 @@ function checkHash(hashVal, numZeroes) {
     return retVal
 }
 
-function confirmPoW (maxTries, numZeroes, iter) {
+function confirmPoW (maxTries, numZeroes, iter, message) {
     let iterations = iter;
 
-    gitRetry()
+    gitRetry(message)
         .then(function(res){
             iterations++
 
@@ -105,8 +105,8 @@ function confirmPoW (maxTries, numZeroes, iter) {
                 if(isLogging) {console.log('Maximum Tries Reached'); }
                 gitResetH();
             } else {
-                if(isLogging) {console.log("Iteration: 1; " + res); }
-                confirmPoW (maxTries, numZeroes, iterations)
+                if(isLogging) {console.log("Iteration: " + iterations + "; " + res); }
+                confirmPoW (maxTries, numZeroes, iterations, message + iterations)
             }
         });
 }
@@ -117,11 +117,11 @@ function processData (input) {
     let fileNm      = shaObj.getHash("HEX")
     let fullFile    = path.join(filePath, fileNm);
 
-    writeandCommit(fullFile, input, encoding)
+    writeandCommit(fullFile, input, encoding, dfltMssg + '1')
         .then(function (res) {
             if(isLogging) {console.log("Iteration: 1; " + res); }
             checkHash(res, 1) ? console.log("MATCH on iteration: 1; " + res) 
-                : confirmPoW (40, 1, 2);
+                : confirmPoW (40, 1, 1, dfltMssg + '2');
         })
         .catch(function (err) {
             console.error('CAUGHT ERROR: ', err);
