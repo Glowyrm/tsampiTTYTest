@@ -1,4 +1,5 @@
 *.sh
+*.log
 hashStdin.js
 ignore.txt
 node_modules

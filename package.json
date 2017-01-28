@@ -1,14 +1,24 @@
 {
-  "name": "tsampi-fcommit",
+  "name": "git_stage",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Test of tsampi functionality; generate files from terminal input, and git commit them w/ proper PoW",
+  "main": "file-commit.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Glowyrm/tsampiTTYTest.git"
+  },
+  "keywords": [
+    "tsampi"
+  ],
+  "author": "Brian Randall",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Glowyrm/tsampiTTYTest/issues"
+  },
+  "homepage": "https://github.com/Glowyrm/tsampiTTYTest#readme",
   "dependencies": {
     "child-process-promise": "^2.2.0",
     "jssha": "^2.2.0"
